@@ -1,0 +1,23 @@
+{
+    "name": "lauzis/crawl-and-compare-html",
+    "description": "Crawls pages and gets html checks the diff betweeen results",
+    "version": "1.0.0",
+    "type": "project",
+    "license": "GPL 3.0",
+    "autoload": {
+        "psr-4": {
+            "Lauzis\\CrawlAndCompareHtml\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "lauzis",
+            "email": "lauzis@inbox.lv"
+        }
+    ],
+    "require": {
+        "symfony/filesystem": "^7.1",
+        "symfony/cache": "^7.1",
+      "ext-curl": "*"
+    }
+}

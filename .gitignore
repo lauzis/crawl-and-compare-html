@@ -1,0 +1,6 @@
+/vendor/
+config.php
+/output/
+/cache/
+.idea
+cookie.txt
