@@ -24,6 +24,13 @@ For example if you just want to see if there is some url with 500 response
 ## Version  
 1.0.0
 
+## Ides for next releases
+- More meta data
+  - Add time stats, to compare loading time, if suddenly some url loads much longer as previously
+  - Add size stats, to compare if size differ this could be another red flag
+- Possibility ontinue previous crawl not register as new crawl so skipp the alreadycashed items
+
+
 ## Change log
 
 ### 1.0.0
