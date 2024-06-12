@@ -1,5 +1,6 @@
 <?php
 
+const USER_AGENTS = ['Mozilla/5.0 (I AM ROBOT)'];
 
 $sitesToCompare = [
     [
@@ -16,3 +17,5 @@ $compareWith = 'https://test.example.com/';
 $hardLimit = 1000;
 $sleepTime = 2;
 $threads = 6;
+//how many previous crawls to look up
+$historyLookup = 3;

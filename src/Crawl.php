@@ -37,16 +37,14 @@ class Crawl
 
     private function getCacheKey(string $url, ?int $crawlId = null): string
     {
-        if ($crawlId) {
-            return $crawlId . '/' . date("Y-m-d") . '/' . md5($url);
-        }
-        return $this->crawlId . '/' . date("Y-m-d") . '/' . md5($url);
+        $cacheKey = ($crawlId ? $crawlId : $this->crawlId) . '/' . md5($url);
+        return $cacheKey;
     }
 
     private function makeRequest(): \StdClass
     {
         $url = $this->data->url;
-        $user_agent = 'Mozilla/5.0 (Windows NT 6.1; rv:8.0) Gecko/20100101 Firefox/8.0';
+        $user_agent = USER_AGENTS[0];
 
         $options = array(
 
@@ -105,7 +103,7 @@ class Crawl
             $this->getUrls();
 
             $this->data->crawlDate = time();
-            CrawlCache::set($cacheKey, $data);
+            CrawlCache::set($cacheKey, $this->data);
 
         } catch (Exception $e) {
 

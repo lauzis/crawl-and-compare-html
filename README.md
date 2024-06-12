@@ -29,9 +29,18 @@ For example if you just want to see if there is some url with 500 response
   - Add time stats, to compare loading time, if suddenly some url loads much longer as previously
   - Add size stats, to compare if size differ this could be another red flag
 - Possibility ontinue previous crawl not register as new crawl so skipp the alreadycashed items
-
+- Add possibility to recrawl the urls that in previous crawl was with some particular status
+- Add config, list of esential links, so they would be crawled/tested first, alspo probably have to split, report with esential and full, so it would be possible to check essentials as soon as possible
+- Add some settings or regex for list of files for ignoring urls not to crawl.
 
 ## Change log
+
+### 1.0.1
+- added so that previous crawl report would not be overwritten
+- fixed "No data" even if there was previous flag
+- in parallel save to json 
+- added settings for how many history crawls put in csv/json
+- move used argent to the settings 
 
 ### 1.0.0
 initial version, mvp, crawls page by given url and generates csv with current status response and previous crawl state.

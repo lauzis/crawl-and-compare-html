@@ -1,7 +1,7 @@
 {
     "name": "lauzis/crawl-and-compare-html",
     "description": "Crawls pages and gets html checks the diff betweeen results",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "type": "project",
     "license": "GPL 3.0",
     "autoload": {
