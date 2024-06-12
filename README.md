@@ -22,7 +22,7 @@ For example if you just want to see if there is some url with 500 response
 `php crawl.php | grep "Status: 500"`
 
 ## Version  
-1.0.0
+1.0.1
 
 ## Ides for next releases
 - More meta data
