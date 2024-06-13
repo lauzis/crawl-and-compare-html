@@ -1,5 +1,6 @@
 /vendor/
 config.php
+config.essential.url.list.php
 /output/
 /cache/
 .idea

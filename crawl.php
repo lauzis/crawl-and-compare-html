@@ -26,17 +26,28 @@ $header[] = 'current crawl status';
 $fp = fopen($crawlCsvPath, 'w');
 fputcsv($fp, $header);
 $rows = [];
+$essentialUrlsFinished = false;
+$essentialUrlsStarted = false;
+$essentialUrlsJsonReportOpened = false;
 foreach ($sitesToCompare as $item) {
     //TODO in paralel for each item
     $counter = 0;
-    $openedLinksCounter =0;
-    while (count($item['toCrawl']) > 0 && $hardLimit > $counter) {
-        $url = array_pop($item['toCrawl']);
-        if (in_array($url, $item['crawled'])) {
-            continue;
+    $openedLinksCounter = 0;
+    while ((count($item['essentialUrlsToCrawl']) > 0 || count($item['toCrawl'])) > 0 && $hardLimit > $counter) {
+        if (count($item['essentialUrlsToCrawl']) > 0) {
+            $essentialUrlsStarted = true;
+            $url = \Lauzis\CrawlAndCompareHtml\CrawlHelpers::stripTrailingSlashes($item['rootUrl']).array_pop($item['essentialUrlsToCrawl']);
+            if (count($item['essentialUrlsToCrawl']) == 0) {
+                $essentialUrlsFinished = true;
+            }
+        } else {
+            $url = array_pop($item['toCrawl']);
+            if (in_array($url, $item['crawled'])) {
+                continue;
+            }
         }
         $counter++;
-        echo "Items to crawl: " . count($item['crawled']) . " / " . count($item['toCrawl']) . "\n";
+        echo "Crawling... ".($essentialUrlsStarted && !$essentialUrlsFinished ? " essential: ".count($item['essentialUrlsToCrawl']) : "") . "  crawled:" . count($item['crawled']) . "  backlog: " . count($item['toCrawl']) . "\n";
         echo "--------------------------------\n";
         echo "Crawling: " . $url . "\n";
         $data = $crawl->crawlUrl($url);
@@ -54,11 +65,11 @@ foreach ($sitesToCompare as $item) {
             $prevCrawlStatus = $prevCrawlData->status ?? "No Data";
             $row[] = $prevCrawlStatus;
         }
-        if ($autoOpenUrlInBrowser && $openedLinksCounter < $autoOpenUrlInBrowserLimit &&  in_array($data->status , $autoOpenUrlInBrowserIfStatusIs)) {
+        if ($autoOpenUrlInBrowser && $openedLinksCounter < $autoOpenUrlInBrowserLimit && in_array($data->status, $autoOpenUrlInBrowserIfStatusIs)) {
             try {
                 $openedLinksCounter++;
-                exec($autoOpenUrlInBrowserCommand.' ' . $url);
-            } catch (\Exception $exception){
+                exec($autoOpenUrlInBrowserCommand . ' ' . $url);
+            } catch (\Exception $exception) {
                 print_r($exception);
             }
         }
@@ -67,7 +78,13 @@ foreach ($sitesToCompare as $item) {
         $rows[] = $row;
 
         fputcsv($fp, $row);
-        file_put_contents($crawlCsvPath . ".json", json_encode($rows));
+
+        $essentialPath = $essentialUrlsStarted && !$essentialUrlsFinished ? ".essential" : "";
+        file_put_contents($crawlCsvPath . $essentialPath.".json", json_encode($rows));
+        if ($essentialUrlsStarted && $essentialUrlsFinished && !$essentialUrlsJsonReportOpened) {
+            $essentialUrlsJsonReportOpened = true;
+            exec($autoOpenUrlInBrowserCommand ." ". $crawlCsvPath . ".essential.json");
+        }
     }
     print ("Crawled: " . $data->url . " with status: " . $data->status . "\n");
     if ($sleepTime) {

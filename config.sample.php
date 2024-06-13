@@ -1,5 +1,7 @@
 <?php
 
+$essentialUrlsToCrawl = [];
+include(__DIR__.'/config.essential.url.list.php');
 const USER_AGENTS = ['Mozilla/5.0 (I AM ROBOT)'];
 
 $sitesToCompare = [
@@ -8,7 +10,8 @@ $sitesToCompare = [
         'toCrawl' => [
             'https://linux.com/',
         ],
-        'crawled' => []
+        'crawled' => [],
+        'essentialUrlsToCrawl'=>$essentialUrlsToCrawl,
     ],
 ];
 

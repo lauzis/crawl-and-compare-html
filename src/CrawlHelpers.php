@@ -2,12 +2,14 @@
 
 namespace Lauzis\CrawlAndCompareHtml;
 
-class CrawlHelpers{
+class CrawlHelpers
+{
 
     /*
      *  source from https://stackoverflow.com/questions/34034730/how-to-enable-color-for-php-cli
      */
-    public static function colorLog(string $str, int | string $type = '') {
+    public static function colorLog(string $str, int|string $type = '')
+    {
         switch ($type) {
             case 500:
             case 'error': //error
@@ -28,6 +30,11 @@ class CrawlHelpers{
                 echo "$str \n";
                 break;
         }
+    }
+
+    public static function stripTrailingSlashes(string $str): string
+    {
+        return rtrim($str, '/');
     }
 
 }
