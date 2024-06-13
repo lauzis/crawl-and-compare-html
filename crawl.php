@@ -18,8 +18,8 @@ if (file_exists($crawlCsvPath)) {
 touch($crawlCsvPath);
 
 $header = ['url'];
-for($i=0; $i < $historyLookup; $i++){
-    $header[]="History status ".(-$historyLookup+$i);
+for ($i = 0; $i < $historyLookup; $i++) {
+    $header[] = "History status " . (-$historyLookup + $i);
 }
 $header[] = 'current crawl status';
 
@@ -29,6 +29,7 @@ $rows = [];
 foreach ($sitesToCompare as $item) {
     //TODO in paralel for each item
     $counter = 0;
+    $openedLinksCounter =0;
     while (count($item['toCrawl']) > 0 && $hardLimit > $counter) {
         $url = array_pop($item['toCrawl']);
         if (in_array($url, $item['crawled'])) {
@@ -41,23 +42,32 @@ foreach ($sitesToCompare as $item) {
         $data = $crawl->crawlUrl($url);
         $item['crawled'][] = $url;
         $item['toCrawl'] = array_unique(array_merge($item['toCrawl'], $data->getLinks()));
-        echo "Crawled: " . $url . " Status: " . $data->status . "\n";
+
+        \Lauzis\CrawlAndCompareHtml\CrawlHelpers::colorLog("Crawled: " . $url . " Status: " . $data->status, $data->status);
 
         $row = [$url];
-        for($i=0; $i<$historyLookup; $i++){
-            $prevCrawlId = $crawl->getCrawlId() - ($i+1);
+        for ($i = 0; $i < $historyLookup; $i++) {
+            $prevCrawlId = $crawl->getCrawlId() - ($i + 1);
             $prevCrawl = new Lauzis\CrawlAndCompareHtml\Crawl($prevCrawlId, onlyFromCache: true);
 
             $prevCrawlData = $prevCrawl->crawlUrl($url);
             $prevCrawlStatus = $prevCrawlData->status ?? "No Data";
             $row[] = $prevCrawlStatus;
         }
+        if ($autoOpenUrlInBrowser && $openedLinksCounter < $autoOpenUrlInBrowserLimit &&  in_array($data->status , $autoOpenUrlInBrowserIfStatusIs)) {
+            try {
+                $openedLinksCounter++;
+                exec($autoOpenUrlInBrowserCommand.' ' . $url);
+            } catch (\Exception $exception){
+                print_r($exception);
+            }
+        }
         $row[] = $data->status;
 
         $rows[] = $row;
 
         fputcsv($fp, $row);
-        file_put_contents($crawlCsvPath.".json",json_encode($rows));
+        file_put_contents($crawlCsvPath . ".json", json_encode($rows));
     }
     print ("Crawled: " . $data->url . " with status: " . $data->status . "\n");
     if ($sleepTime) {
